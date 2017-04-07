@@ -52,6 +52,18 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 #####################################
+# PHP REDIS EXTENSION FOR PHP 7.1
+#####################################
+
+ARG INSTALL_PHPREDIS=false
+RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
+    # Install Php Redis Extension
+    pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis \
+;fi
+
+#####################################
 # MongoDB:
 #####################################
 
@@ -95,6 +107,17 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
 ;fi
 
 #####################################
+# Exif:
+#####################################
+
+ARG INSTALL_EXIF=false
+RUN if [ ${INSTALL_EXIF} = true ]; then \
+    # Enable Exif PHP extentions requirements
+    docker-php-ext-install exif && \
+    docker-php-ext-enable exif \
+;fi
+
+#####################################
 # PHP Aerospike:
 #####################################
 
@@ -132,7 +155,7 @@ COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 # Mysqli Modifications:
 #####################################
 ARG INSTALL_MYSQLI=false
-RUN if [ ${INSTALL_MYSQLI} = true ]; then \    
+RUN if [ ${INSTALL_MYSQLI} = true ]; then \
      docker-php-ext-install mysqli \
 ;fi
 
@@ -171,13 +194,38 @@ RUN if [ ${GHOSTSCRIPT} = true ]; then \
     ghostscript \
 ;fi
 
+#####################################
+# PhalconPHP Modifications:
+#####################################
+
+ARG INSTALL_PHALCONPHP=false
+RUN if [ ${INSTALL_PHALCONPHP} = true ]; then \
+    # Install the phalcon-php extension
+    curl -L -o /tmp/cphalcon.tar.gz "https://github.com/phalcon/cphalcon/archive/v3.0.4.tar.gz" \
+    && mkdir -p cphalcon \
+    && tar -C cphalcon -zxvf /tmp/cphalcon.tar.gz --strip 1 \
+    && ( \
+        cd cphalcon/build \
+        && ./install \
+        && echo 'extension=phalcon.so' > /usr/local/etc/php/conf.d/phalcon.ini \
+    ) \
+    && rm /tmp/cphalcon.tar.gz \
+;fi
+
+# RUN git clone http://github.com/phalcon/phalcon-devtools.git \
+#     && cd phalcon-devtools/ \
+#     && . /home/phalcon/phalcon-devtools/phalcon.sh \
+#     && ln -s /home/phalcon/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+#     && chmod +x /usr/local/bin/phalcon
+
+
 #
 #--------------------------------------------------------------------------
 # Final Touch
 #--------------------------------------------------------------------------
 #
 
-ADD ./laravel.ini /usr/local/etc/php/conf.d
+ADD ./php-dev.ini /usr/local/etc/php/conf.d
 ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 
 RUN rm -r /var/lib/apt/lists/*
