@@ -404,7 +404,9 @@ services:
       depends_on:
         - php-fpm
       networks:
-		- backend
+        - frontend
+        - backend
+
 ### pgAdmin Container #######################################
 
     pgadmin:
