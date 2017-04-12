@@ -34,8 +34,19 @@ MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
 # in the `docker-compose.yml` before the build.
 # Example:
 #   - INSTALL_ZIP_ARCHIVE=true
-#   - ...
 #
+
+#####################################
+# SOAP:
+#####################################
+
+ARG INSTALL_SOAP=false
+RUN if [ ${INSTALL_SOAP} = true ]; then \
+    # Install the soap extension
+    apt-get -y update && \
+    apt-get -y install libxml2-dev php-soap && \
+    docker-php-ext-install soap \
+;fi
 
 #####################################
 # xDebug:
@@ -52,7 +63,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 #####################################
-# PHP REDIS EXTENSION FOR PHP 7.1
+# PHP REDIS EXTENSION FOR PHP 7
 #####################################
 
 ARG INSTALL_PHPREDIS=false
@@ -85,6 +96,16 @@ RUN if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
 ;fi
 
 #####################################
+# bcmath:
+#####################################
+
+ARG INSTALL_BCMATH=false
+RUN if [ ${INSTALL_BCMATH} = true ]; then \
+    # Install the bcmath extension
+    docker-php-ext-install bcmath \
+;fi
+
+#####################################
 # PHP Memcached:
 #####################################
 
@@ -113,8 +134,7 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
 ARG INSTALL_EXIF=false
 RUN if [ ${INSTALL_EXIF} = true ]; then \
     # Enable Exif PHP extentions requirements
-    docker-php-ext-install exif && \
-    docker-php-ext-enable exif \
+    docker-php-ext-install exif \
 ;fi
 
 #####################################
@@ -137,15 +157,16 @@ RUN if [ ${INSTALL_AEROSPIKE_EXTENSION} = true ]; then \
         && make install \
     ) \
     && rm /tmp/aerospike-client-php.tar.gz \
+    && docker-php-ext-enable aerospike \
 ;fi
 
 #####################################
 # Opcache:
 #####################################
+
 ARG INSTALL_OPCACHE=false
 RUN if [ ${INSTALL_OPCACHE} = true ]; then \
-    docker-php-ext-install opcache && \
-    docker-php-ext-enable opcache \
+    docker-php-ext-install opcache \
 ;fi
 
 # Copy opcache configration
@@ -154,6 +175,7 @@ COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 #####################################
 # Mysqli Modifications:
 #####################################
+
 ARG INSTALL_MYSQLI=false
 RUN if [ ${INSTALL_MYSQLI} = true ]; then \
      docker-php-ext-install mysqli \
@@ -172,8 +194,8 @@ RUN if [ ${INSTALL_TOKENIZER} = true ]; then \
 # Human Language and Character Encoding Support:
 #####################################
 
-ARG INTL=false
-RUN if [ ${INTL} = true ]; then \
+ARG INSTALL_INTL=false
+RUN if [ ${INSTALL_INTL} = true ]; then \
     # Install intl and requirements
     apt-get install -y zlib1g-dev libicu-dev g++ && \
     docker-php-ext-configure intl && \
@@ -184,7 +206,7 @@ RUN if [ ${INTL} = true ]; then \
 # GHOSTSCRIPT:
 #####################################
 
-ARG GHOSTSCRIPT=false
+ARG INSTALL_GHOSTSCRIPT=false
 RUN if [ ${GHOSTSCRIPT} = true ]; then \
     # Install the ghostscript extension
     # for PDF editing
