@@ -17,7 +17,7 @@ RUN apk update \
     && echo "upstream php-upstream { server ${PHP_UPSTREAM}:9000; }" > /etc/nginx/conf.d/upstream.conf
 
 # Add SSL Certification Files
-ADD certs-dev/* /etc/ssl/certs/
+ADD certs-dev/ /etc/ssl/certs/
 
 CMD ["nginx"]
 
