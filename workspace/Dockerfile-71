@@ -279,6 +279,14 @@ USER laradock
 RUN echo "" >> ~/.bashrc && \
     echo 'export PATH="/var/www/vendor/bin:$PATH"' >> ~/.bashrc
 
+#####################################
+# SVN:
+#####################################
+
+USER root
+
+RUN apt-get update && apt-get install -y subversion
+
 #
 #--------------------------------------------------------------------------
 # Final Touch
