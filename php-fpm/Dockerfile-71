@@ -193,7 +193,7 @@ COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 ARG INSTALL_MYSQLI=false
 RUN if [ ${INSTALL_MYSQLI} = true ]; then \
-     docker-php-ext-install mysqli \
+    docker-php-ext-install mysqli \
 ;fi
 
 #####################################
@@ -212,7 +212,8 @@ RUN if [ ${INSTALL_TOKENIZER} = true ]; then \
 ARG INSTALL_INTL=false
 RUN if [ ${INSTALL_INTL} = true ]; then \
     # Install intl and requirements
-    apt-get -y update && apt-get install -y zlib1g-dev libicu-dev g++ && \
+    apt-get -y update && \
+    apt-get install -y zlib1g-dev libicu-dev g++ && \
     docker-php-ext-configure intl && \
     docker-php-ext-install intl \
 ;fi
@@ -231,38 +232,13 @@ RUN if [ ${INSTALL_GHOSTSCRIPT} = true ]; then \
     ghostscript \
 ;fi
 
-#####################################
-# PhalconPHP Modifications:
-#####################################
-
-ARG INSTALL_PHALCONPHP=false
-RUN if [ ${INSTALL_PHALCONPHP} = true ]; then \
-    # Install the phalcon-php extension
-    curl -L -o /tmp/cphalcon.tar.gz "https://github.com/phalcon/cphalcon/archive/v3.1.2.tar.gz" \
-    && mkdir -p cphalcon \
-    && tar -C cphalcon -zxvf /tmp/cphalcon.tar.gz --strip 1 \
-    && ( \
-        cd cphalcon/build \
-        && ./install \
-        && echo 'extension=phalcon.so' > /usr/local/etc/php/conf.d/phalcon.ini \
-    ) \
-    && rm /tmp/cphalcon.tar.gz \
-;fi
-
-# RUN git clone http://github.com/phalcon/phalcon-devtools.git \
-#     && cd phalcon-devtools/ \
-#     && . /home/phalcon/phalcon-devtools/phalcon.sh \
-#     && ln -s /home/phalcon/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
-#     && chmod +x /usr/local/bin/phalcon
-
-
 #
 #--------------------------------------------------------------------------
 # Final Touch
 #--------------------------------------------------------------------------
 #
 
-ADD ./php-dev.ini /usr/local/etc/php/conf.d
+ADD ./laravel.ini /usr/local/etc/php/conf.d
 ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 
 #RUN rm -r /var/lib/apt/lists/*
