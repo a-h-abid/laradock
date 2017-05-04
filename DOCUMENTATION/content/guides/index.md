@@ -165,14 +165,14 @@ Remove 0.0.0.0:80
 
 ```
 0.0.0.0:80
-root /var/www
+root /var/www/public
 ```
 
 and replace with your https://yourdomain.com
 
 ```
 https://yourdomain.com
-root /var/www
+root /var/www/public
 ```
 
 uncomment tls
