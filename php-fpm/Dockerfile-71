@@ -166,7 +166,7 @@ RUN if [ ${INSTALL_AEROSPIKE} = true ]; then \
     # Fix dependencies for PHPUnit within aerospike extension
     apt-get update -yqq && \
     apt-get -y install sudo wget && \
-    
+
     # Install the php aerospike extension
     curl -L -o /tmp/aerospike-client-php.tar.gz "https://github.com/aerospike/aerospike-client-php/archive/3.4.14.tar.gz" \
     && mkdir -p aerospike-client-php \
@@ -316,13 +316,29 @@ RUN if [ ${INSTALL_MSSQL} = true ]; then \
     && echo "extension=pdo_sqlsrv.so" > /usr/local/etc/php/conf.d/20-pdo_sqlsrv.ini \
 ;fi
 
+#####################################
+# PHALCON PHP:
+#####################################
+
+ARG INSTALL_PHALCONPHP=false
+RUN if [ ${INSTALL_PHALCONPHP} = true ]; then \
+    apt-get update -yqq \
+    && apt-get install -y libpcre3-dev gcc make re2c git \
+    && cd /tmp \
+    && git clone --depth=1 "git://github.com/phalcon/cphalcon.git" \
+    && cd cphalcon/build \
+    && ./install \
+    && echo "extension=phalcon.so" >  /usr/local/etc/php/conf.d/30-phalconphp.ini \
+    && cd / \
+;fi
+
 #
 #--------------------------------------------------------------------------
 # Final Touch
 #--------------------------------------------------------------------------
 #
 
-ADD ./laravel.ini /usr/local/etc/php/conf.d
+ADD ./php-dev.ini /usr/local/etc/php/conf.d
 ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
 
 #RUN rm -r /var/lib/apt/lists/*
