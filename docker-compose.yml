@@ -69,10 +69,10 @@ services:
           - INSTALL_EXIF=${PHP_FPM_INSTALL_EXIF}
           - INSTALL_AEROSPIKE=${PHP_FPM_INSTALL_AEROSPIKE}
           - INSTALL_MYSQLI=${PHP_FPM_INSTALL_MYSQLI}
-          - INSTALL_MYSQL=${PHP_FPM_INSTALL_MYSQL}
           - INSTALL_TOKENIZER=${PHP_FPM_INSTALL_TOKENIZER}
           - INSTALL_INTL=${PHP_FPM_INSTALL_INTL}
           - INSTALL_GHOSTSCRIPT=${PHP_FPM_INSTALL_GHOSTSCRIPT}
+          - INSTALL_LDAP=${PHP_FPM_INSTALL_LDAP}
           - INSTALL_PHALCONPHP=${PHP_FPM_INSTALL_PHALCONPHP}
         dockerfile: "Dockerfile-${PHP_VERSION}"
       volumes_from:
@@ -99,6 +99,8 @@ services:
         - applications
       depends_on:
         - workspace
+      extra_hosts:
+        - "dockerhost:${DOCKER_HOST_IP}"
       networks:
         - backend
 
@@ -213,7 +215,8 @@ services:
         - MYSQL_PASSWORD=${PERCONA_PASSWORD}
         - MYSQL_ROOT_PASSWORD=${PERCONA_ROOT_PASSWORD}
       volumes:
-        - percona:/var/lib/mysql
+        - ${DATA_SAVE_PATH}/percona:/var/lib/mysql
+        - ./percona/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       ports:
         - "${PERCONA_PORT}:3306"
       networks:
@@ -242,6 +245,7 @@ services:
       volumes:
         #- ${DATA_SAVE_PATH}/mariadb:/var/lib/mysql
         - mariadb:/var/lib/mysql
+        - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       ports:
         - "${MARIADB_PORT}:3306"
       environment:
@@ -301,7 +305,7 @@ services:
     mongo:
       build: ./mongo
       ports:
-        - "27017:27017"
+        - "${MONGODB_PORT}:27017"
       volumes:
         - ${DATA_SAVE_PATH}/mongo:/data/db
       networks:
@@ -312,7 +316,7 @@ services:
     rethinkdb:
       build: ./rethinkdb
       ports:
-        - "8090:8080"
+        - "${RETHINKDB_PORT}:8080"
       volumes:
         - ${DATA_SAVE_PATH}/rethinkdb:/data/rethinkdb_data
       networks:
@@ -338,10 +342,10 @@ services:
       volumes:
         - ${DATA_SAVE_PATH}/aerospike:/opt/aerospike/data
       ports:
-        - "3000:3000"
-        - "3001:3001"
-        - "3002:3002"
-        - "3003:3003"
+        - "${AEROSPIKE_SERVICE_PORT}:3000"
+        - "${AEROSPIKE_FABRIC_PORT}:3001"
+        - "${AEROSPIKE_HEARTBEAT_PORT}:3002"
+        - "${AEROSPIKE_INFO_PORT}:3003"
       networks:
         - backend
 
@@ -402,16 +406,15 @@ services:
 
     caddy:
       build: ./caddy
-      ports:
-        - "80:80"
-        - "443:443"
-        - "2015:2015"
       volumes_from:
         - applications
       volumes:
-        - ./caddy/Caddyfile:/etc/Caddyfile
-        - ./logs/caddy:/var/log/caddy
-        - caddy:/root/.caddy
+        - ${CADDY_CUSTOM_CADDYFILE}:/etc/Caddyfile
+        - ${CADDY_HOST_LOG_PATH}:/var/log/caddy
+        - ${DATA_SAVE_PATH}:/root/.caddy
+      ports:
+        - "${CADDY_HOST_HTTP_PORT}:80"
+        - "${CADDY_HOST_HTTPS_PORT}:443"
       depends_on:
         - php-fpm
       networks:
