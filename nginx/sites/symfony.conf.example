@@ -8,7 +8,7 @@ server {
     index index.php index.html index.htm;
 
     location / {
-      try_files $uri @rewriteapp;
+        try_files $uri @rewriteapp;
     }
 
     location @rewriteapp {
