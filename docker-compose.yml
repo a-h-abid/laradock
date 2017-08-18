@@ -35,6 +35,7 @@ services:
           - INSTALL_SYMFONY=${WORKSPACE_INSTALL_SYMFONY}
           - INSTALL_PYTHON=${WORKSPACE_INSTALL_PYTHON}
           - INSTALL_IMAGE_OPTIMIZERS=${WORKSPACE_INSTALL_IMAGE_OPTIMIZERS}
+          - INSTALL_PHALCONPHP_DEVTOOLS=${WORKSPACE_INSTALL_PHALCONPHP_DEVTOOLS}
           - PUID=${WORKSPACE_PUID}
           - PGID=${WORKSPACE_PGID}
           - NODE_VERSION=${WORKSPACE_NODE_VERSION}
@@ -477,7 +478,7 @@ services:
       networks:
         - frontend
         - backend
-      
+
 
 ### ElasticSearch Container #################################
 

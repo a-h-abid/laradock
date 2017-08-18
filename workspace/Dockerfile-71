@@ -555,14 +555,21 @@ RUN if [ ${INSTALL_PYTHON} = true ]; then \
   && pip install --upgrade virtualenv \
 ;fi
 
-
 #####################################
-# SVN:
+# PhalconPHP Devtools:
 #####################################
 
-USER root
+ARG INSTALL_PHALCONPHP_DEVTOOLS=false
+ENV INSTALL_PHALCONPHP_DEVTOOLS ${INSTALL_PHALCONPHP_DEVTOOLS}
+RUN if [ ${INSTALL_PHALCONPHP_DEVTOOLS} = true ]; then \
+  cd ~ \
+  && curl -s "https://packagecloud.io/install/repositories/phalcon/stable/script.deb.sh" | bash \
+  && apt-get install php7.1-phalcon \
+  && git clone --depth=1 https://github.com/phalcon/phalcon-devtools phalcon-devtools \
+  && ln -s ~/phalcon-devtools/phalcon.php /usr/bin/phalcon \
+  && chmod ugo+x /usr/bin/phalcon \
+;fi
 
-RUN apt-get update && apt-get install -y subversion
 
 #
 #--------------------------------------------------------------------------
