@@ -1,10 +1,8 @@
 server {
-
     listen 80;
-    listen [::]:80;
 
-    server_name ci-eface.dev;
-    root /var/www/ci-eface/www;
+    server_name codeigniter.dev;
+    root /var/www/codeigniter/public;
     index index.php index.html index.htm;
 
     location / {

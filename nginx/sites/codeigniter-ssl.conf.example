@@ -1,10 +1,16 @@
+
 server {
-
     listen 80;
-    listen [::]:80;
 
-    server_name eicracms-setup.dev;
-    root /var/www/eicracms-setup/public;
+    server_name codeigniter-ssl.dev;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+
+    server_name codeigniter-ssl.dev;
+    root /var/www/codeigniter-ssl/public;
     index index.php index.html index.htm;
 
     location / {
@@ -18,6 +24,7 @@ server {
         fastcgi_buffers 16 16k;
         fastcgi_buffer_size 32k;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param CI_ENV development;
         include fastcgi_params;
     }
 
@@ -29,7 +36,11 @@ server {
         root /var/www/letsencrypt/;
         log_not_found off;
     }
+
+    ssl_certificate /etc/ssl/certs/selfsigned.crt;
+    ssl_certificate_key /etc/ssl/certs/selfsigned.key;
+
+    add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
 }
-
-
-
