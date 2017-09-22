@@ -2,7 +2,7 @@ server {
 
     listen 80;
 
-    server_name cakephp2.dev;
+    server_name cakephp2.localhost;
     root /var/www/cakephp2/app/webroot;
     index index.php index.html index.htm;
 

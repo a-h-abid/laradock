@@ -1,7 +1,7 @@
 server {
     listen 80;
 
-    server_name codeigniter.dev;
+    server_name codeigniter.localhost;
     root /var/www/codeigniter/public;
     index index.php index.html index.htm;
 
