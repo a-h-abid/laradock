@@ -943,6 +943,24 @@ docker-compose up -d aws
 
 
 <br>
+<a name="Use-Grafana"></a>
+## Use Grafana
+
+1 - Configure Grafana: Change Port using `GRAFANA_PORT` if you wish to. Default is port 3000.
+
+2 - Run the Grafana Container (`grafana`) with the `docker-compose up`command:
+
+```bash
+docker-compose up -d grafana
+```
+
+3 - Open your browser and visit the localhost on port **3000** at the following URL: `http://localhost:3000`
+
+4 - Login using the credentials User = `admin` Passwort = `admin`. Change the password in the webinterface if you want to.
+
+
+
+<br>
 <a name="CodeIgniter"></a>
 
 
@@ -1681,6 +1699,6 @@ This error sometimes happens because your Laravel application isn't running on t
 * Option B
    1. Change the `DB_HOST` value to the same name as the MySQL docker container. The Laradock docker-compose file currently has this as `mysql`
 
-## I get stuck when building ngxinx on `fetch http://mirrors.aliyun.com/alpine/v3.5/main/x86_64/APKINDEX.tar.gz`
+## I get stuck when building nginx on `fetch http://mirrors.aliyun.com/alpine/v3.5/main/x86_64/APKINDEX.tar.gz`
 
 As stated on [#749](https://github.com/laradock/laradock/issues/749#issuecomment-293296687), removing the line `RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories` from `nginx/Dockerfile` solves the problem.		
